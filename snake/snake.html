@@ -62,7 +62,7 @@
 			this._queue = [];
 
 			this.insert(x,y);
-			console.log(this._queue.length);
+			//console.log(this._queue.length);
 		},
 
 		insert: function(x,y){
@@ -98,6 +98,8 @@
 		snake.init(DOWN,sp.x,sp.y);
 		keyState = DOWN;
 
+		setFood();
+
 		document.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 37:
@@ -114,6 +116,20 @@
 					break;
 			}
 		})
+	}
+
+	function setFood(){
+		var emptyCells = [];
+		for(var x=0; x<grid.width ; x++){
+			for(var y=0; y< grid.height; y++){
+				if (grid.get(x,y) == EMPTY){
+					emptyCells.push({x:x,y:y});
+				}
+			}
+		}
+		var c = Math.floor(Math.random()*1000) % emptyCells.length;
+		var loc = emptyCells[c]
+		grid.set(FRUIT,loc.x,loc.y);
 	}
 
 	function loop(){
@@ -157,11 +173,16 @@
 		nx = (nx + grid.width) % grid.width;
 		ny = (ny + grid.height) % grid.height;
 
-		var tail = snake.remove();
-		grid.set(EMPTY,tail.x,tail.y);
+		var pickedFruit = grid.get(nx,ny) == FRUIT;
+		if(!pickedFruit){
+			var tail = snake.remove();
+			grid.set(EMPTY,tail.x,tail.y);
+		}
 		
 		grid.set(SNAKE,nx,ny);
 		snake.insert(nx,ny);
+
+		if(pickedFruit) setFood();
 
 
 	}
