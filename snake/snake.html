@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5 Snake game</title>
+
+<style type="text/css">
+	
+	#canvas{
+		display: block;
+		margin: 0 auto;
+		border : 1px solid black;
+	}
+</style>
+<script type="text/javascript">
+	
+	//Constants
+	var ROWS = 15;
+	var COLS = 30;
+
+	var EMPTY=0, SNAKE=1, FRUIT=2;
+
+	//directions
+	var UP=1, RIGHT=2, DOWN=3, LEFT=4;
+
+	var grid = {
+		width: null,
+		height: null,
+		_grid: null,
+
+		init: function(d,c,r){
+			this.width=c;
+			this.height=r;
+
+			this._grid = [];
+			for(var x=0; x<c ; x++){
+				this._grid.push([]);
+				for(var y=0; y< r; y++){
+					this._grid[x].push(d);
+				}
+			}
+
+		},
+
+		set: function(val,x,y){
+			//console.log({x:x,y:y});
+			this._grid[x][y]=val;
+		},
+
+		get: function(x,y){
+			return this._grid[x][y];
+		}
+	};
+
+	var snake = {
+		last : null,
+		direction: null,
+		_queue: null,
+
+		init: function(d,x,y){
+			this.direction = d;
+			this.last = {x:x, y:y};
+			this._queue = [];
+
+			this.insert(x,y);
+			console.log(this._queue.length);
+		},
+
+		insert: function(x,y){
+			this._queue.unshift({x:x, y:y});
+			this.last = this._queue[0];
+		},
+		remove: function(x,y){
+			return this._queue.pop();
+		}
+	};
+
+	//game objects
+	var canvas, ctx,frames;
+
+	function main(){
+		canvas = document.createElement("canvas");
+		canvas.id = "canvas";
+		canvas.width = COLS*20;
+		canvas.height = ROWS*20;
+		ctx = canvas.getContext("2d");
+		document.body.appendChild(canvas);
+		
+		init();
+		loop();
+	}
+
+	function init(){
+		frames = 0;
+		grid.init(EMPTY,COLS,ROWS);
+
+		var sp = {x: Math.floor(COLS/2), y: Math.floor(ROWS/2)};
+		grid.set(SNAKE,sp.x,sp.y);
+		snake.init(DOWN,sp.x,sp.y);
+	}
+
+	function loop(){
+		//console.log('loop func called');
+		update();
+		draw();
+
+		window.requestAnimationFrame(loop,canvas);
+	}
+
+	function update(){
+		frames++;
+
+		if(frames %5 !==0){
+			return;
+		}
+
+		var nx = snake.last.x;
+		var ny = snake.last.y;
+		
+		switch(snake.direction){
+			case UP:
+				ny--;
+				break;
+			case RIGHT:
+				nx++;
+				break;
+			case DOWN:
+				ny++;
+				break;
+			case LEFT:
+				nx--;
+				break;
+		}
+
+		nx = (nx + grid.width) % grid.width;
+		ny = (ny + grid.height) % grid.height;
+
+		var tail = snake.remove();
+		grid.set(EMPTY,tail.x,tail.y);
+		
+		grid.set(SNAKE,nx,ny);
+		snake.insert(nx,ny);
+
+
+	}
+
+	function draw(){
+		var tw = canvas.width/grid.width;
+		var th = canvas.height/grid.height;
+
+		for(var x=0; x<grid.width ; x++){
+			for(var y=0; y< grid.height; y++){
+				switch(grid.get(x,y)){
+					case EMPTY:
+						ctx.fillStyle = "#fff";
+						break;
+					case SNAKE:
+						ctx.fillStyle = "#000";
+						break;
+					case FRUIT:
+						ctx.fillStyle = "#f00";
+						break;
+				}
+				ctx.fillRect(x*tw,y*th,tw,th)
+			}
+		}
+	}
+
+
+</script>
+</head>
+<body>
+
+<script type="text/javascript">
+	main();
+</script>
+</body>
+</html>
