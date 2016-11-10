@@ -75,7 +75,7 @@
 	};
 
 	//game objects
-	var canvas, ctx,frames, keyState;
+	var canvas, ctx,frames, keyState, animationFrameId, finished;
 
 	function main(){
 		canvas = document.createElement("canvas");
@@ -137,7 +137,8 @@
 		update();
 		draw();
 
-		window.requestAnimationFrame(loop,canvas);
+		if(!finished)
+			animationFrameId = window.requestAnimationFrame(loop,canvas);
 	}
 
 	function update(){
@@ -172,6 +173,12 @@
 
 		nx = (nx + grid.width) % grid.width;
 		ny = (ny + grid.height) % grid.height;
+
+		if(grid.get(nx,ny) == SNAKE){
+			window.cancelAnimationFrame(animationFrameId);
+			finished = true;
+			console.log('GAME OVER!!!');
+		}
 
 		var pickedFruit = grid.get(nx,ny) == FRUIT;
 		if(!pickedFruit){
