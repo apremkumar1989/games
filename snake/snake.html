@@ -75,7 +75,7 @@
 	};
 
 	//game objects
-	var canvas, ctx,frames;
+	var canvas, ctx,frames, keyState;
 
 	function main(){
 		canvas = document.createElement("canvas");
@@ -96,6 +96,24 @@
 		var sp = {x: Math.floor(COLS/2), y: Math.floor(ROWS/2)};
 		grid.set(SNAKE,sp.x,sp.y);
 		snake.init(DOWN,sp.x,sp.y);
+		keyState = DOWN;
+
+		document.addEventListener("keydown", function(e){
+			switch(e.keyCode){
+				case 37:
+					keyState = LEFT;
+					break;
+				case 38:
+					keyState = UP;
+					break;
+				case 39:
+					keyState = RIGHT;
+					break;
+				case 40:
+					keyState = DOWN;
+					break;
+			}
+		})
 	}
 
 	function loop(){
@@ -108,6 +126,11 @@
 
 	function update(){
 		frames++;
+
+		if(keyState==DOWN) snake.direction=DOWN;
+		if(keyState==UP) snake.direction=UP;
+		if(keyState==LEFT) snake.direction=LEFT;
+		if(keyState==RIGHT) snake.direction=RIGHT;
 
 		if(frames %5 !==0){
 			return;
