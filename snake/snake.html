@@ -17,6 +17,10 @@
 	#start-btn{
 		width: 250px;
 	}
+
+	#finish{
+		padding-left: 70px;
+	}
 </style>
 <script type="text/javascript">
 	
@@ -50,7 +54,6 @@
 		},
 
 		set: function(val,x,y){
-			//console.log({x:x,y:y});
 			this._grid[x][y]=val;
 		},
 
@@ -70,7 +73,6 @@
 			this._queue = [];
 
 			this.insert(x,y);
-			//console.log(this._queue.length);
 		},
 
 		insert: function(x,y){
@@ -79,6 +81,9 @@
 		},
 		remove: function(x,y){
 			return this._queue.pop();
+		},
+		first: function(){
+			return this._queue[0];
 		}
 	};
 
@@ -119,6 +124,7 @@
 		keyState = DOWN;
 
 		setFood();
+		document.getElementById("finish").style.display = "none";
 
 		document.addEventListener("keydown", function(e){
 			switch(e.keyCode){
@@ -153,12 +159,16 @@
 	}
 
 	function loop(){
-		//console.log('loop func called');
 		update();
 		draw();
 
-		if(!finished)
+		if(!finished){
 			animationFrameId = window.requestAnimationFrame(loop,canvas);
+		}else{
+			document.getElementById("finish").style.display = "block";
+
+			document.getElementById("high-score").innerHTML = Math.max(parseInt(document.getElementById("high-score").innerHTML),score);
+		}
 	}
 
 	function update(){
@@ -197,7 +207,6 @@
 		if(grid.get(nx,ny) == SNAKE){
 			window.cancelAnimationFrame(animationFrameId);
 			finished = true;
-			console.log('GAME OVER!!!');
 		}
 
 		var pickedFruit = grid.get(nx,ny) == FRUIT;
@@ -231,15 +240,24 @@
 				switch(grid.get(x,y)){
 					case EMPTY:
 						ctx.fillStyle = "#fff";
-						ctx.fillRect(x*tw,y*th,tw,th)
+						ctx.fillRect(x*tw,y*th,tw,th);
 						break;
 					case SNAKE:
 						ctx.fillStyle = "#000";
-						ctx.fillRect(x*tw,y*th,tw,th)
+						ctx.fillRect(x*tw,y*th,tw,th);
+
+						var f = snake.first();
+						if(f.x==x && f.y==y){
+							ctx.fillStyle = "#FFC300";
+							ctx.fillRect(x*tw,y*th,tw,th);
+							ctx.fillStyle = "#000";
+							ctx.fillRect(x*tw+tw/2-tw/10,y*th+th/2-th/10,tw/5,th/5);						
+						}
+
 						break;
 					case FRUIT:
 						ctx.fillStyle = "#D1F2EB";
-						ctx.fillRect(x*tw,y*th,tw,th)
+						ctx.fillRect(x*tw,y*th,tw,th);
 						var img=document.getElementById("fruit-img");
 						ctx.drawImage(img,x*tw,y*th,tw,th);
 						break;
@@ -268,15 +286,25 @@
 	  <div class="col-xs-4 col-md-4" >
 	  	<div class="row">
 	  		<div class="col-xs-6 col-md-6">
+	  			<h4>High Score: </h4>	
+	  		</div>
+	  		<div class="col-xs-6 col-md-6">
+	  			<h4 id="high-score" class="text-left">0</h4>
+	  		</div>
+	  	</div>
+	  	<div class="row">
+	  		<div class="col-xs-6 col-md-6">
 	  			<h4>Score: </h4>	
 	  		</div>
 	  		<div class="col-xs-6 col-md-6">
 	  			<h4 id="score" class="text-left">0</h4>
 	  		</div>
-	  		
 	  	</div>
 	  	<br/><br/>
 	  	<button type="button" id="start-btn" class="btn btn-danger btn-lg" onclick="start()">START</button>
+	  	<div class="row">
+	  		<h3 id="finish" style="display: none;">Game Over!!!</h3>
+	  	</div>
 	 </div>
 	</div>
 </div>
