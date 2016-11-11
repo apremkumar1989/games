@@ -25,8 +25,8 @@
 <script type="text/javascript">
 	
 	//Constants
-	var ROWS = 50;
-	var COLS = 50;
+	var ROWS = 40;
+	var COLS = 40;
 	var CELL_WIDTH = 10;
 
 	var EMPTY=0, SNAKE=1, FRUIT=2;
@@ -153,7 +153,7 @@
 				}
 			}
 		}
-		var c = Math.floor(Math.random()*1000) % emptyCells.length;
+		var c = Math.floor(Math.random()*1000*grid.width*grid.height) % emptyCells.length;
 		var loc = emptyCells[c]
 		grid.set(FRUIT,loc.x,loc.y);
 	}
@@ -243,15 +243,17 @@
 						ctx.fillRect(x*tw,y*th,tw,th);
 						break;
 					case SNAKE:
-						ctx.fillStyle = "#000";
-						ctx.fillRect(x*tw,y*th,tw,th);
-
 						var f = snake.first();
 						if(f.x==x && f.y==y){
 							ctx.fillStyle = "#FFC300";
 							ctx.fillRect(x*tw,y*th,tw,th);
 							ctx.fillStyle = "#000";
-							ctx.fillRect(x*tw+tw/2-tw/10,y*th+th/2-th/10,tw/5,th/5);						
+							ctx.fillRect(x*tw+tw/2-tw/10,y*th+th/2-th/10,tw/5,th/5);
+						}else{
+							ctx.fillStyle = "#000";
+							ctx.fillRect(x*tw,y*th,tw,th);
+							ctx.strokeStyle = "#fff";
+							ctx.strokeRect(x*tw,y*th,tw,th);
 						}
 
 						break;
