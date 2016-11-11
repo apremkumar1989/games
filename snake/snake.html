@@ -84,12 +84,18 @@
 		canvas.height = ROWS*20;
 		ctx = canvas.getContext("2d");
 		document.body.appendChild(canvas);
-		
+	}
+
+	function start(){
+		if(animationFrameId){
+			cancelAnimationFrame(animationFrameId);
+		}
 		init();
 		loop();
 	}
 
 	function init(){
+		finished = false;
 		frames = 0;
 		grid.init(EMPTY,COLS,ROWS);
 
@@ -224,5 +230,7 @@
 <script type="text/javascript">
 	main();
 </script>
+
+<button onclick="start()">Start</button>
 </body>
 </html>
