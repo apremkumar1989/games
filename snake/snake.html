@@ -25,9 +25,9 @@
 <script type="text/javascript">
 	
 	//Constants
-	var ROWS = 15;
-	var COLS = 30;
-	var CELL_WIDTH = 20;
+	var ROWS = 50;
+	var COLS = 50;
+	var CELL_WIDTH = 10;
 
 	var EMPTY=0, SNAKE=1, FRUIT=2;
 
@@ -179,7 +179,7 @@
 		if(keyState==LEFT) snake.direction=LEFT;
 		if(keyState==RIGHT) snake.direction=RIGHT;
 
-		if(frames %5 !==0){
+		if(frames %4 !==0){
 			return;
 		}
 
