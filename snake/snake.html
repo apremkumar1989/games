@@ -3,12 +3,19 @@
 <head>
 	<title>HTML5 Snake game</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <style type="text/css">
 	
 	#canvas{
-		display: block;
-		margin: 0 auto;
 		border : 1px solid black;
+	}
+
+	#start-btn{
+		width: 250px;
 	}
 </style>
 <script type="text/javascript">
@@ -16,6 +23,7 @@
 	//Constants
 	var ROWS = 15;
 	var COLS = 30;
+	var CELL_WIDTH = 20;
 
 	var EMPTY=0, SNAKE=1, FRUIT=2;
 
@@ -75,15 +83,14 @@
 	};
 
 	//game objects
-	var canvas, ctx,frames, keyState, animationFrameId, finished;
+	var canvas, ctx,frames, keyState, animationFrameId, finished,score=0;
 
 	function main(){
-		canvas = document.createElement("canvas");
-		canvas.id = "canvas";
-		canvas.width = COLS*20;
-		canvas.height = ROWS*20;
+		canvas = document.getElementById("canvas");
+		canvas.width = COLS * CELL_WIDTH;
+		canvas.height = ROWS * CELL_WIDTH;
 		ctx = canvas.getContext("2d");
-		document.body.appendChild(canvas);
+		window.requestAnimationFrame(setBanner);
 	}
 
 	function start(){
@@ -94,9 +101,16 @@
 		loop();
 	}
 
+	function setBanner(){
+		var img=document.getElementById("snake-img");
+		ctx.drawImage(img,150,50,250,250);
+	}
+
 	function init(){
 		finished = false;
 		frames = 0;
+		score = 0;
+		setScore(score);
 		grid.init(EMPTY,COLS,ROWS);
 
 		var sp = {x: Math.floor(COLS/2), y: Math.floor(ROWS/2)};
@@ -195,9 +209,17 @@
 		grid.set(SNAKE,nx,ny);
 		snake.insert(nx,ny);
 
-		if(pickedFruit) setFood();
+		if(pickedFruit) {
+			score++;
+			setScore(score);
+			setFood();
+		};
 
 
+	}
+
+	function setScore(score){
+		document.getElementById("score").innerHTML=score;
 	}
 
 	function draw(){
@@ -209,15 +231,20 @@
 				switch(grid.get(x,y)){
 					case EMPTY:
 						ctx.fillStyle = "#fff";
+						ctx.fillRect(x*tw,y*th,tw,th)
 						break;
 					case SNAKE:
 						ctx.fillStyle = "#000";
+						ctx.fillRect(x*tw,y*th,tw,th)
 						break;
 					case FRUIT:
-						ctx.fillStyle = "#f00";
+						ctx.fillStyle = "#D1F2EB";
+						ctx.fillRect(x*tw,y*th,tw,th)
+						var img=document.getElementById("fruit-img");
+						ctx.drawImage(img,x*tw,y*th,tw,th);
 						break;
 				}
-				ctx.fillRect(x*tw,y*th,tw,th)
+				
 			}
 		}
 	}
@@ -227,10 +254,38 @@
 </head>
 <body>
 
-<script type="text/javascript">
-	main();
-</script>
+<div class="container">
 
-<button onclick="start()">Start</button>
+	<div class="row">
+	<h1 class="text-center">Classic Snake</h1>
+	</div>
+
+	<div class="row">
+	  <div class="col-xs-8 col-md-8">
+	  	<canvas id="canvas"> </canvas>
+	  </div>
+
+	  <div class="col-xs-4 col-md-4" >
+	  	<div class="row">
+	  		<div class="col-xs-6 col-md-6">
+	  			<h4>Score: </h4>	
+	  		</div>
+	  		<div class="col-xs-6 col-md-6">
+	  			<h4 id="score" class="text-left">0</h4>
+	  		</div>
+	  		
+	  	</div>
+	  	<br/><br/>
+	  	<button type="button" id="start-btn" class="btn btn-danger btn-lg" onclick="start()">START</button>
+	 </div>
+	</div>
+</div>
+
+<img id="snake-img" src="snake-img.png" style="display: none"/>
+<img id="fruit-img" src="fruit-img.png" style="display: none"/>
+
+<script type="text/javascript">
+	window.onload=main;
+</script>
 </body>
 </html>
